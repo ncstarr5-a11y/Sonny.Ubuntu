@@ -1,0 +1,62 @@
+body {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#chat-container {
+    width: 60%;
+    margin: 40px auto;
+    background: #2a2a2a;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#chat-window {
+    height: 500px;
+    overflow-y: auto;
+    background: #1b1b1b;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.message {
+    margin-bottom: 12px;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.user {
+    background: #3a3f5a;
+    text-align: right;
+}
+
+.droide {
+    background: #2f4f2f;
+}
+
+#input-area {
+    display: flex;
+}
+
+#user-input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background: #333;
+    color: white;
+}
+
+#send-btn {
+    padding: 10px 20px;
+    margin-left: 10px;
+    background: #4caf50;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+}
