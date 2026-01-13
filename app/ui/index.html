@@ -8,12 +8,13 @@
 <body>
 
 <div id="chat-container">
-    <h1>Droide1.0</h1>
+    <h1>Droide1.0 <span id="status-indicator" class="offline">● Offline</span></h1>
 
     <div id="chat-window"></div>
 
     <div id="input-area">
-        <input type="text" id="user-input" placeholder="Type your message...">
+        <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
+        <button id="send-btn" type="button">Send</button>
     </div>
 </div>
 

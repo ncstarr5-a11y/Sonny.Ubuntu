@@ -7,6 +7,7 @@ can call to interact with Droide.
 
 As Droide grows, this file will remain the "front door" to the system.
 """
+
 from app.memory.memory_log import log_memory
 from app.memory.memory_manager import store_memory, search_memory
 from fastapi import FastAPI
@@ -25,6 +26,10 @@ app = FastAPI(
     description="Backend API for your personal AI assistant.",
     version="1.0.0"
 )
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 # ---------------------------------------------------------
 # Request model for sending prompts to Droide

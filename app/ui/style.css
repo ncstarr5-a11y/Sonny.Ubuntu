@@ -60,3 +60,19 @@ body {
     color: white;
     cursor: pointer;
 }
+
+#status-indicator {
+    font-size: 0.8rem;
+    margin-left: 10px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    color: white;
+}
+
+#status-indicator.online {
+    background-color: #28a745; /* green */
+}
+
+#status-indicator.offline {
+    background-color: #dc3545; /* red */
+}
