@@ -25,7 +25,7 @@ async function sendMessage() {
     });
 
     const data = await response.json();
-    addMessage(data.response, "droide");
+    addMessage(data.response, "sonny");
 }
 
 sendBtn.addEventListener("click", sendMessage);

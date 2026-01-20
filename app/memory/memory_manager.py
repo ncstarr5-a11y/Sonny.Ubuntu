@@ -1,8 +1,8 @@
 """
-memory_manager.py — High-level memory interface for Droide
+memory_manager.py — High-level memory interface for sonny
 
 This module provides simple functions for storing and retrieving
-memories using ChromaDB. Droide will use this to remember facts,
+memories using ChromaDB. sonny will use this to remember facts,
 conversations, user preferences, and long-term context.
 """
 from app.memory.chroma_client import get_memory_collection
@@ -26,7 +26,7 @@ def store_memory(text: str, metadata: dict = None) -> str:
     memory_id = str(uuid.uuid4())
 
     # Chroma 0.4.x requires metadata to be a NON-empty dict
-    safe_metadata = metadata or {"source": "droide"}
+    safe_metadata = metadata or {"source": "sonny"}
 
     collection.add(
         ids=[memory_id],
@@ -70,7 +70,7 @@ def search_memory(query: str, n_results: int = 3):
 def list_all_memories():
     """
     Returns all stored memories.
-    Useful for debugging or inspecting Droide's long-term memory.
+    Useful for debugging or inspecting sonny's long-term memory.
 
     Returns:
         dict: All memory entries.

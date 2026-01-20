@@ -1,21 +1,21 @@
-# Droide1.0 — AI Assistant Backend
+# Sonny1.0 — AI Assistant Backend
 
-This folder contains the backend code for **Droide1.0**, your personal AI assistant.
+This folder contains the backend code for **Sonny1.0**, your personal AI assistant.
 The backend is built using **FastAPI**, a modern Python web framework.
 
 ---
 
 ## 📁 Project Structure (Simplified)
 
-droide-system/ │ ├── app/ │   ├── main.py          # Entrypoint for the API │   ├── brain/           # AI logic (future) │   ├── memory/          # Long-term memory (future) │   ├── actions/         # Things Droide can do (future) │   ├── api/             # API endpoints (future) │   └── utils/           # Helper functions (future) │ ├── data/                # Memory, logs, configs └── venv/                # Python virtual environment
+sonny-system/ │ ├── app/ │   ├── main.py          # Entrypoint for the API │   ├── brain/           # AI logic (future) │   ├── memory/          # Long-term memory (future) │   ├── actions/         # Things Sonny can do (future) │   ├── api/             # API endpoints (future) │   └── utils/           # Helper functions (future) │ ├── data/                # Memory, logs, configs └── venv/                # Python virtual environment
 
 ---
 
-# 🚀 Running Droide1.0
+# 🚀 Running Sonny1.0
 
 ## 1. Activate the virtual environment
 
-cd /home/droide/droide-system source venv/bin/activate
+cd /home/sonny/sonny-system source venv/bin/activate
 
 
 ## 2. Start the FastAPI server
@@ -30,7 +30,7 @@ http://127.0.0.1:8000
 
 Or use curl:
 
-curl -X POST http://localhost:8000/ask -d '{"prompt":"Hello Droide"}' -H "Content-Type: application/json"
+curl -X POST http://localhost:8000/ask -d '{"prompt":"Hello Sonny"}' -H "Content-Type: application/json"
 
 
 ---
@@ -54,7 +54,7 @@ The backend collects the streamed output.
 4. The backend returns the response to you
 Example:
 {
-  "prompt": "Hello Droide",
+  "prompt": "Hello Sonny",
   "response": "Greetings, young Padawan..."
 }
 
@@ -65,24 +65,24 @@ Requirements
 • 	Requests
 • 	Ollama installed and running
 
-Goal of Droide1.0
+Goal of Sonny1.0
 This version is intentionally simple:
 • 	One endpoint
 • 	One model
 • 	One brain function
-It gives you a clean foundation to grow Droide into a full AI ecosystem.
+It gives you a clean foundation to grow Sonny into a full AI ecosystem.
 
 #################################################
 
 ## 🧠 Memory System (ChromaDB)
 
-Droide1.0 uses **ChromaDB** as its long-term memory engine.
+Sonny1.0 uses **ChromaDB** as its long-term memory engine.
 
 ### How it works
 
 1. Text is converted into an embedding vector using Ollama.
 2. The vector is stored in ChromaDB along with the original text.
-3. When Droide needs to recall something, it searches for similar embeddings.
+3. When sonny needs to recall something, it searches for similar embeddings.
 
 ### Key files
 

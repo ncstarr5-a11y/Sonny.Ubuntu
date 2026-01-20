@@ -1,11 +1,11 @@
 """
-main.py — Entrypoint for Droide1.0
+main.py — Entrypoint for sonny1.0
 
 This file starts the FastAPI server that powers your AI assistant.
 It exposes HTTP endpoints that your UI, scripts, or other devices
-can call to interact with Droide.
+can call to interact with sonny.
 
-As Droide grows, this file will remain the "front door" to the system.
+As sonny grows, this file will remain the "front door" to the system.
 """
 
 from app.memory.memory_log import log_memory
@@ -22,7 +22,7 @@ import json
 # FastAPI application instance
 # ---------------------------------------------------------
 app = FastAPI(
-    title="Droide1.0 API",
+    title="sonny1.0 API",
     description="Backend API for your personal AI assistant.",
     version="1.0.0"
 )
@@ -32,16 +32,16 @@ async def health():
     return {"status": "ok"}
 
 # ---------------------------------------------------------
-# Request model for sending prompts to Droide
+# Request model for sending prompts to sonny
 # ---------------------------------------------------------
 class PromptRequest(BaseModel):
     """
     Defines the structure of the JSON body expected when
-    sending a prompt to Droide.
+    sending a prompt to sonny.
 
     Example:
     {
-        "prompt": "Hello Droide, how are you?"
+        "prompt": "Hello sonny, how are you?"
     }
     """
     prompt: str
@@ -56,7 +56,7 @@ def send_to_ollama(prompt: str) -> str:
 
     url = "http://localhost:11434/api/generate"
     payload = {
-        "model": "llama3.1",
+        "model": "llama3.1:latest",
         "prompt": prompt,
         "stream": False 
     }
@@ -99,16 +99,16 @@ def root():
     Returns:
         dict: A simple message confirming the API is running.
     """
-    return {"status": "Droide1.0 online", "message": "System operational."}
+    return {"status": "sonny1.0 online", "message": "System operational."}
 
 
 # ---------------------------------------------------------
-# Main AI endpoint — send a prompt to Droide
+# Main AI endpoint — send a prompt to sonny
 # ---------------------------------------------------------
 @app.post("/ask")
-def ask_droide(request: PromptRequest):
+def ask_sonny(request: PromptRequest):
     """
-    Main endpoint for interacting with Droide.
+    Main endpoint for interacting with sonny.
     Now includes memory retrieval and storage.
     """
 
@@ -125,7 +125,7 @@ def ask_droide(request: PromptRequest):
     memory_context = "\n".join(retrieved_memories) if retrieved_memories else ""
 
     final_prompt = f"""
-You are Droide, a helpful AI assistant.
+You are sonny, a helpful AI assistant.
 
 Relevant past memories:
 {memory_context}
@@ -141,10 +141,10 @@ Respond clearly and helpfully.
 
     # 4. Store the new memory
     store_memory(f"User: {user_prompt}")
-    store_memory(f"Droide: {ai_response}")
+    store_memory(f"sonny: {ai_response}")
 
     log_memory("USER", user_prompt)
-    log_memory("DROIDE", ai_response)
+    log_memory("SONNY", ai_response)
 
     return {
         "prompt": user_prompt,
@@ -183,7 +183,7 @@ app.mount("/ui", StaticFiles(directory="app/ui"), name="ui")
 @app.get("/web")
 def web_ui():
     """
-    Serves the Droide web interface.
+    Serves the sonny web interface.
     """
     return FileResponse("app/ui/index.html")
 #-------------------------------------------------------------------

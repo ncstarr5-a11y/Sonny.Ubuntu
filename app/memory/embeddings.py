@@ -1,5 +1,5 @@
 """
-embeddings.py — Embedding generator for Droide
+embeddings.py — Embedding generator for sonny
 
 This module sends text to Ollama's embedding endpoint and returns
 a vector representation. These vectors are used by ChromaDB to

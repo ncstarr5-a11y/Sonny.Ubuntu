@@ -2,15 +2,15 @@
 chroma_client.py — Handles connection to ChromaDB
 
 This module initializes a persistent ChromaDB client and exposes
-a function to retrieve the memory collection used by Droide.
+a function to retrieve the memory collection used by sonny.
 
-ChromaDB stores vector embeddings and metadata, allowing Droide
+ChromaDB stores vector embeddings and metadata, allowing sonny
 to remember past interactions, facts, and context.
 """
 import chromadb
 import os
 
-CHROMA_PATH = "/home/droide/droide-system/data/chroma"
+CHROMA_PATH = "/home/sonny/sonny-system/data/chroma"
 
 def get_chroma_client():
     os.makedirs(CHROMA_PATH, exist_ok=True)
@@ -25,7 +25,7 @@ def get_chroma_client():
 def get_memory_collection():
     client = get_chroma_client()
     collection = client.get_or_create_collection(
-        name="droide_memory",
+        name="sonny_memory",
         metadata={"hnsw:space": "cosine"}
     )
     return collection

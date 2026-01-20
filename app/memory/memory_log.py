@@ -1,5 +1,5 @@
 """
-memory_log.py — Simple append-only memory log for Droide.
+memory_log.py — Simple append-only memory log for sonny.
 
 Every stored memory is also written to a human-readable log file.
 """
@@ -7,14 +7,14 @@ Every stored memory is also written to a human-readable log file.
 import os
 from datetime import datetime
 
-LOG_PATH = "/home/droide/droide-system/data/memory.log"
+LOG_PATH = "/home/sonny/sonny-system/data/memory.log"
 
 def log_memory(role: str, text: str):
     """
     Appends a memory entry to the log file.
 
     Args:
-        role (str): "USER" or "DROIDE"
+        role (str): "USER" or "SONNY"
         text (str): The memory text
     """
 
