@@ -7,10 +7,10 @@ can call to interact with sonny.
 
 As sonny grows, this file will remain the "front door" to the system.
 """
-
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
 from app.memory.memory_log import log_memory
 from app.memory.memory_manager import store_memory, search_memory
-from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -49,44 +49,30 @@ class PromptRequest(BaseModel):
 # ---------------------------------------------------------
 # Helper function: Send prompt to Ollama
 # ---------------------------------------------------------
-def send_to_ollama(prompt: str) -> str:
-    """
-    Sends a prompt to Ollama and returns a clean, human-readable response.
-    """
-
+def send_to_ollama(prompt: str):
     url = "http://localhost:11434/api/generate"
     payload = {
-        "model": "llama3.1:latest",
+        "model": "phi3:3.8b",
         "prompt": prompt,
-        "stream": False 
+        "stream": True
     }
 
     try:
-        response = requests.post(url, json=payload, stream=True)
-        response.raise_for_status()
+        with requests.post(url, json=payload, stream=True) as response:
+            response.raise_for_status()
 
-        full_output = ""
-
-        for line in response.iter_lines():
-            if not line:
-                continue
-
-            try:
-                # Parse each JSON chunk
-                chunk = json.loads(line.decode("utf-8"))
-
-                # Append only the text part
-                if "response" in chunk:
-                    full_output += chunk["response"]
-
-            except Exception:
-                # Ignore malformed lines
-                continue
-
-        return full_output.strip()
+            for line in response.iter_lines():
+                if line:
+                    data = json.loads(line.decode("utf-8"))
+                    chunk = data.get("response", "")
+                    if chunk:
+                        yield chunk
 
     except Exception as e:
-        return f"[ERROR contacting Ollama] {str(e)}"
+        yield f"[ERROR contacting Ollama] {str(e)}"
+
+
+
 
 # ---------------------------------------------------------
 # Root endpoint — simple health check
@@ -104,25 +90,18 @@ def root():
 
 # ---------------------------------------------------------
 # Main AI endpoint — send a prompt to sonny
-# ---------------------------------------------------------
+# -------------------------------------------------------
 @app.post("/ask")
 def ask_sonny(request: PromptRequest):
-    """
-    Main endpoint for interacting with sonny.
-    Now includes memory retrieval and storage.
-    """
 
     user_prompt = request.prompt
 
-    # 1. Retrieve relevant memories
+    # memory retrieval stays the same
     memory_results = search_memory(user_prompt, n_results=3)
+    retrieved_memories = memory_results.get("documents", [[]])[0] if memory_results else []
 
-    retrieved_memories = []
-    if memory_results and "documents" in memory_results:
-        retrieved_memories = memory_results["documents"][0]
-
-    # 2. Build the enhanced prompt
-    memory_context = "\n".join(retrieved_memories) if retrieved_memories else ""
+    cleaned_memories = [m.strip() for m in retrieved_memories if isinstance(m, str) and m.strip()]
+    memory_context = "\n".join(cleaned_memories)
 
     final_prompt = f"""
 You are sonny, a helpful AI assistant.
@@ -136,22 +115,22 @@ User message:
 Respond clearly and helpfully.
 """
 
-    # 3. Generate response
-    ai_response = send_to_ollama(final_prompt)
+    # streaming generator
+    def stream():
+        full_response = ""
+        for chunk in send_to_ollama(final_prompt):
+            full_response += chunk
+            yield chunk
 
-    # 4. Store the new memory
-    store_memory(f"User: {user_prompt}")
-    store_memory(f"sonny: {ai_response}")
+        # store memory after full response is complete
+        store_memory(f"User: {user_prompt}")
+        store_memory(f"sonny: {full_response}")
+        log_memory("USER", user_prompt)
+        log_memory("SONNY", full_response)
 
-    log_memory("USER", user_prompt)
-    log_memory("SONNY", ai_response)
+    return StreamingResponse(stream(), media_type="text/plain")
 
-    return {
-        "prompt": user_prompt,
-        "response": ai_response,
-        "memories_used": retrieved_memories,
-        "memory_stored": True
-    }
+
 
 
 #-----------------------------------------------------------------
