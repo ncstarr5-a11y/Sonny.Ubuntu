@@ -6,7 +6,7 @@ memories using ChromaDB. sonny will use this to remember facts,
 conversations, user preferences, and long-term context.
 """
 from app.memory.chroma_client import get_memory_collection
-from app.memory.embedder import embed_text  # whatever you use to embed text
+from app.memory.embedder import embed_text  # whatever I use to embed text
 import uuid
 
 # ---------------------------------------------------------
@@ -37,11 +37,6 @@ def store_memory(text: str, metadata: dict = None) -> str:
 
     return memory_id
 
-
-
-
-
-
 # ---------------------------------------------------------
 # Search for similar memories
 # ---------------------------------------------------------
@@ -59,9 +54,6 @@ def search_memory(query: str, n_results: int = 3):
     )
 
     return results
-
-
-
 
 # ---------------------------------------------------------
 # Retrieve all memories (debugging)
