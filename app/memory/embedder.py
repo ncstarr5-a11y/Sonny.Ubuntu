@@ -1,4 +1,15 @@
-def embed_text(text: str):
-    # Temporary dummy embedding to keep the system running
-    # Returns a fixed-size vector of zeros
-    return [0.0] * 768
+from app.memory.embeddings import generate_embedding
+
+def embed_text(text: str) -> list:
+    """
+    Wrapper around the embedding generator.
+    Ensures we always return a valid vector.
+    """
+    embedding = generate_embedding(text)
+
+    # Fallback if Ollama fails
+    if not embedding:
+        return [0.0] * 768
+
+    return embedding
+

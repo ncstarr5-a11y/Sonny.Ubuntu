@@ -11,7 +11,7 @@ import json
 import os
 
 from app.memory.memory_log import log_memory
-from app.memory.memory_manager import store_memory, search_memory
+from app.memory.memory_manager import store_memory, search_memory, normalize_memory, should_store_memory
 
 
 # ---------------------------------------------------------
@@ -133,6 +133,9 @@ def ask_sonny(request: PromptRequest):
 
     memory_context = "\n".join(cleaned) if cleaned else "No relevant memories found."
 
+    # Store user prompt as memory
+    if should_store_memory(user_prompt):
+        store_memory(normalize_memory(user_prompt))
     # Build final prompt
     final_prompt = f"""
 {SYSTEM_PROMPT}
@@ -145,6 +148,8 @@ User message:
 
 Respond clearly and helpfully.
 """
+
+
 
     # Streaming generator
     def stream():
