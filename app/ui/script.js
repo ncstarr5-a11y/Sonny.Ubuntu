@@ -18,20 +18,16 @@ function updateMessage(msgElement, newText) {
     msgElement.textContent = newText;
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
-
+// Handle sending a message
 async function sendMessage() {
     const text = userInput.value.trim();
     if (!text) return;
 
-    // Add user message
     addMessage(text, "user");
     userInput.value = "";
 
-    // Create empty Sonny bubble 
     const sonnyMsg = addMessage("…", "sonny");
 
-
-    // Send streaming request
     const response = await fetch("/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -50,25 +46,7 @@ async function sendMessage() {
         const chunk = decoder.decode(value, { stream: true });
         fullText += chunk;
 
-        // Update Sonny's bubble live
-        let buffer = "";
-        let updating = false; 
-
-        while (true) {
-            const { value, done } = await reader.read(); 
-            if (done) break; 
-            
-            buffer += decoder.decode(value, { stream: true }); 
-            if (!updating) {
-                updating = true; 
-                setTimeout(() => { 
-                    fullText += buffer; 
-                    updateMessage(sonnyMsg, fullText); 
-                    buffer = ""; 
-                    updating = false;
-                 }, 30);
-                 } 
-                }
+        updateMessage(sonnyMsg, fullText);
     }
 }
 

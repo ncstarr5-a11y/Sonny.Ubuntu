@@ -1,15 +1,15 @@
 from app.memory.embeddings import generate_embedding
 
+# Cache the fallback dimension after first successful embed
+FALLBACK_DIM = 768
+
 def embed_text(text: str) -> list:
-    """
-    Wrapper around the embedding generator.
-    Ensures we always return a valid vector.
-    """
+    global FALLBACK_DIM
+
     embedding = generate_embedding(text)
 
-    # Fallback if Ollama fails
-    if not embedding:
-        return [0.0] * 768
+    if embedding:
+        FALLBACK_DIM = len(embedding)
+        return embedding
 
-    return embedding
-
+    return [0.0] * FALLBACK_DIM

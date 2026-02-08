@@ -1,0 +1,9 @@
+# TODO FOR 
+1. Add logging to your logs folder
+So every reminder trigger gets written to:data/logs/reminders.log
+2. Add MQTT or TTS notifications
+So Sonny can actually speak reminders or push them to your devices.
+3. Add a second scheduler for routines
+Morning routines, evening shutdown, medication reminders, etc.
+4. Add a calendar sync service
+Pull events from Google/Outlook → write to .

@@ -11,7 +11,7 @@ import json
 import os
 
 from app.memory.memory_log import log_memory
-from app.memory.memory_manager import store_memory, search_memory, normalize_memory, should_store_memory
+from app.memory.memory_manager import store_memory, normalize_memory, should_store_memory, hybrid_memory_search
 
 
 # ---------------------------------------------------------
@@ -121,9 +121,8 @@ def ask_sonny(request: PromptRequest):
 
     user_prompt = request.prompt
 
-    # Retrieve memory
-    memory_results = search_memory(user_prompt, n_results=3)
-    retrieved = memory_results.get("documents", [[]])[0] if memory_results else []
+    # --- Hybrid memory retrieval ---
+    retrieved = hybrid_memory_search(user_prompt, n_results=3)
 
     cleaned = [
         m.strip()
@@ -133,10 +132,13 @@ def ask_sonny(request: PromptRequest):
 
     memory_context = "\n".join(cleaned) if cleaned else "No relevant memories found."
 
-    # Store user prompt as memory
+    # --- Store memory (correct place) ---
     if should_store_memory(user_prompt):
-        store_memory(normalize_memory(user_prompt))
-    # Build final prompt
+        normalized = normalize_memory(user_prompt)
+        store_memory(normalized)
+        log_memory("memory", normalized)
+
+    # --- Build final prompt ---
     final_prompt = f"""
 {SYSTEM_PROMPT}
 
@@ -149,23 +151,17 @@ User message:
 Respond clearly and helpfully.
 """
 
-
-
-    # Streaming generator
+    # --- Streaming ---
     def stream():
         full_response = ""
-
         for chunk in send_to_ollama(final_prompt):
             full_response += chunk
             yield chunk
-
-        # Store memory AFTER full response
-        store_memory(f"User: {user_prompt}")
-        store_memory(f"Sonny: {full_response}")
-        log_memory("USER", user_prompt)
-        log_memory("SONNY", full_response)
+        # no memory storage here anymore
 
     return StreamingResponse(stream(), media_type="text/plain")
+
+
 
 
 # ---------------------------------------------------------

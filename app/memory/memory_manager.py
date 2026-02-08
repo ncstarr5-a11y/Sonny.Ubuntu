@@ -36,24 +36,6 @@ def store_memory(text: str, metadata: dict = None) -> str:
 
     return memory_id
 
-
-# ---------------------------------------------------------
-# Search for similar memories
-# ---------------------------------------------------------
-
-def search_memory(query: str, n_results: int = 3):
-    collection = get_memory_collection()
-
-    query_embedding = embed_text(query)
-
-    results = collection.query(
-        query_embeddings=[query_embedding],
-        n_results=n_results
-    )
-
-    return results
-
-
 # ---------------------------------------------------------
 # Normalize memory text
 # ---------------------------------------------------------
@@ -113,3 +95,47 @@ def list_all_memories():
     """
     collection = get_memory_collection()
     return collection.get()
+    
+#---------------------------------------------------------
+# Hybrid memory search (semantic + keyword)
+#---------------------------------------------------------
+
+def hybrid_memory_search(query: str, n_results: int = 3):
+    collection = get_memory_collection()
+
+    # --- Semantic search ---
+    semantic = []
+    try:
+        semantic_results = collection.query(
+            query_embeddings=[embed_text(query)],
+            n_results=n_results
+        )
+        semantic = semantic_results.get("documents", [[]])[0]
+    except Exception:
+        semantic = []
+
+    # --- Keyword search ---
+    all_docs = collection.get().get("documents", [])
+    flat_docs = [d for sub in all_docs for d in sub]  # flatten
+
+    keywords = [
+        "name", "prefer", "like", "love", "from", "live",
+        "working on", "kids", "family", "raspberry", "linux",
+        "project", "favourite", "favorite" ,"remember", "use", "have"
+    ]
+
+    keyword_hits = [
+        doc for doc in flat_docs
+        if any(k in doc.lower() for k in keywords)
+    ]
+
+    # Combine + dedupe + trim
+    combined = semantic + keyword_hits
+    seen = set()
+    unique = []
+    for m in combined:
+        if m not in seen:
+            unique.append(m)
+            seen.add(m)
+
+    return unique[:n_results]

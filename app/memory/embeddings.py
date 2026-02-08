@@ -30,7 +30,7 @@ def generate_embedding(text: str) -> list:
     url = "http://localhost:11434/api/embeddings"
     payload = {
         "model": "nomic-embed-text",
-        "prompt": text
+        "input": text
     }
 
     try:
